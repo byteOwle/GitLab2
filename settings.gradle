@@ -8,4 +8,3 @@
  */
 
 rootProject.name = 'gaps-basic-byteOwle'
-include('app')
