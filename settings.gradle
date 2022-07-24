@@ -8,3 +8,5 @@
  */
 
 rootProject.name = 'gaps-basic-byteOwle'
+include('app')
+include('gaps_basic')
