@@ -29,6 +29,6 @@
 				"$gradle"
 			],
 			"label": "gradle: gaps_basic:tasks"
-		}
+		},
 	]
 }

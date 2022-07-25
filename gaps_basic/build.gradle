@@ -33,3 +33,56 @@ tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
 }
+
+task reports (dependsOn: ['javadoc', 'test']) {
+    description 'Generate reports website for this project'
+}
+
+// task deployReports (type: Copy) { 
+// }
+
+def websiteRepo='git@github.com:byteOwle/GitLab2.git'
+
+task clearPages(type: Delete) {
+    delete 'build/gh-pages'
+}
+
+task clonePages(dependsOn: ['clearPages']) {                
+    doLast {
+        exec {
+            workingDir = '.'
+            commandLine = ['git', 'clone', websiteRepo, 'build/gh-pages']
+        }
+    }
+}
+
+task copyWebsite (dependsOn: ['reports', 'clonePages']) {   
+    doLast {
+        ant.copy (todir: 'build/gh-pages') {
+            fileset(dir: 'build/reports')
+        }
+        ant.copy (todir: 'build/gh-pages') {
+            fileset(dir: 'build/docs')
+        }
+    }
+}
+
+task deployReports (dependsOn: 'copyWebsite') {
+    group = "Reporting"
+    description  'Copies reports to the gh-pages branch in preparation for a future push to GitHub'
+    doLast {
+        def pagesDir = "$buildDir/gh-pages"
+        exec {
+            workingDir = 'build/gh-pages'                               
+            commandLine = ['git', 'add', '.']
+        }
+        exec {
+            workingDir = 'build/gh-pages'
+            commandLine = ['git', 'commit', '-m', 'Copied new files into branch']   
+        }
+    }
+}
+
+test {
+    ignoreFailures = true
+}
